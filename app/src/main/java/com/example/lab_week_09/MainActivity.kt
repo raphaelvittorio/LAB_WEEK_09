@@ -27,8 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.example.lab_week_09.ui.theme.LAB_WEEK_09Theme
-
-// Definisikan Data Class [cite: 239-242]
+import com.example.lab_week_09.ui.theme.OnBackgroundItemText
+import com.example.lab_week_09.ui.theme.OnBackgroundTitleText
+import com.example.lab_week_09.ui.theme.PrimaryTextButton
 data class Student(
     var name: String
 )
@@ -51,30 +52,27 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Home() {
-    // State untuk daftar siswa [cite: 248, 255, 260]
     val listData = remember {
         mutableStateListOf(
-            Student("Tanu"), // [cite: 262]
-            Student("Tina"), // [cite: 263]
-            Student("Tono")  // [cite: 264]
+            Student("Tanu"),
+            Student("Tina"),
+            Student("Tono")
         )
     }
 
-    // State untuk input field [cite: 265, 267]
     val inputField = remember { mutableStateOf(Student("")) }
 
-    // Memanggil HomeContent (Stateless) [cite: 268]
+
     HomeContent(
-        listData = listData, // [cite: 274]
-        inputField = inputField.value, // [cite: 275]
-        onInputValueChange = { newName -> // [cite: 276]
+        listData = listData,
+        inputField = inputField.value,
+        onInputValueChange = { newName ->
             inputField.value = inputField.value.copy(name = newName)
         },
-        onButtonClick = { // [cite: 278]
-            // Modul ini memiliki bug, seharusnya pengecekan ada di sini
-            if (inputField.value.name.isNotBlank()) { //
-                listData.add(inputField.value) // Tambahkan ke list
-                inputField.value = Student("") // Reset input field [cite: 281]
+        onButtonClick = {
+            if (inputField.value.name.isNotBlank()) {
+                listData.add(inputField.value)
+                inputField.value = Student("")
             }
         }
     )
@@ -82,44 +80,48 @@ fun Home() {
 
 @Composable
 fun HomeContent(
-    listData: SnapshotStateList<Student>, // [cite: 295]
-    inputField: Student, // [cite: 296]
-    onInputValueChange: (String) -> Unit, // [cite: 297]
-    onButtonClick: () -> Unit // [cite: 298]
+    listData: SnapshotStateList<Student>,
+    inputField: Student,
+    onInputValueChange: (String) -> Unit,
+    onButtonClick: () -> Unit
 ) {
-    LazyColumn { // [cite: 299]
-        item { // [cite: 300]
+    LazyColumn {
+        item {
             Column(
                 modifier = Modifier.padding(16.dp).fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally // [cite: 312, 316]
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = stringResource(id = R.string.enter_item)) // [cite: 317]
-                TextField( // [cite: 321]
-                    value = inputField.name, // [cite: 323]
+
+                OnBackgroundTitleText(text = stringResource(id = R.string.enter_item))
+
+                TextField(
+                    value = inputField.name,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text // [cite: 327]
+                        keyboardType = KeyboardType.Text
                     ),
-                    onValueChange = onInputValueChange // [cite: 338, 344]
+                    onValueChange = onInputValueChange
                 )
-                Button(onClick = onButtonClick) { // [cite: 348, 353]
-                    Text(text = stringResource(id = R.string.button_click)) // [cite: 355]
-                }
+
+
+                PrimaryTextButton(
+                    text = stringResource(id = R.string.button_click),
+                    onClick = onButtonClick
+                )
             }
         }
 
-        // Tampilkan daftar [cite: 362]
-        items(listData) { item -> // [cite: 366]
+        items(listData) { item ->
             Column(
                 modifier = Modifier.padding(vertical = 4.dp).fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = item.name) // [cite: 371]
+                OnBackgroundItemText(text = item.name)
             }
         }
     }
 }
 
-// Pratinjau tidak lagi berfungsi dengan state, tapi bisa dibuat
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewHomeContent() {
